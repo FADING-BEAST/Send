@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Risk Rules | Academic Sentinel{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-2 mb-10">
+    <h2 class="text-3xl font-extrabold font-manrope text-primary tracking-tight">Risk Rules Configuration</h2>
+    <p class="text-secondary max-w-2xl font-body text-sm">
+        Define the algorithmic boundaries that flag students at risk. These thresholds drive the department early intervention system.
+    </p>
+</div>
+
+<!-- Bento Grid Layout -->
+<form action="{{ url_for('admin.update_risk_rules') }}" method="POST" class="grid grid-cols-12 gap-8">
+    <!-- Left: Configuration Form -->
+    <div class="col-span-12 lg:col-span-7 space-y-8">
+        <!-- Main Rules Section -->
+        <section class="bg-white rounded-xl p-8 border border-outline-variant/10 shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-1 h-full bg-primary-container"></div>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="material-symbols-outlined text-primary-container">monitoring</span>
+                <h3 class="font-manrope text-xl font-bold text-primary">Algorithmic Thresholds</h3>
+            </div>
+
+            <div class="space-y-10">
+                {% for rule in rules %}
+                <div class="group/item">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="max-w-md">
+                            <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+                                {{ rule.rule_key.replace('_', ' ') }}
+                            </label>
+                            <p class="text-xs text-slate-500 italic">{{ rule.description }}</p>
+                        </div>
+                        <div class="relative w-full md:w-32">
+                            <input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-lg font-bold text-primary focus:ring-2 focus:ring-primary-container transition-all" 
+                                   step="0.1" type="number" name="rule_{{ rule.rule_key }}" value="{{ rule.value }}"/>
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Value</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end gap-4 pt-10 mt-10 border-t border-outline-variant/10">
+                <button type="reset" class="px-8 py-3 bg-surface-container-high text-on-surface font-bold rounded-xl hover:bg-surface-container-highest transition-colors text-sm">
+                    Reset Defaults
+                </button>
+                <button type="submit" class="px-10 py-3 bg-gradient-to-br from-[#000a1e] to-primary-container text-white font-bold rounded-xl shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                    Apply Logic Changes
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Right: Live Rule Preview -->
+    <div class="col-span-12 lg:col-span-5">
+        <div class="sticky top-24 space-y-6">
+            <div class="bg-[#002147] text-white rounded-xl p-8 shadow-2xl relative overflow-hidden">
+                <!-- Decorative background element -->
+                <div class="absolute -right-12 -top-12 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-8">
+                        <h3 class="font-manrope text-xl font-bold tracking-tight">Logic Preview</h3>
+                        <div class="px-3 py-1 bg-white/10 rounded-full flex items-center gap-2">
+                            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                            <span class="text-[9px] font-bold tracking-widest uppercase">Live Simulation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 flex-shrink-0 bg-error-container/20 rounded-lg flex items-center justify-center">
+                                <span class="material-symbols-outlined text-error">priority_high</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-[9px] uppercase tracking-wider text-[#708ab5] font-bold mb-1">High Risk Condition</p>
+                                <p class="font-inter text-sm text-white leading-relaxed">
+                                    Students with cumulative <span class="text-primary-fixed-dim font-bold">GPA < {{ rules|selectattr("rule_key", "equalto", "gpa_high_threshold")|map(attribute="value")|first|default('2.0') }}</span> 
+                                    will be flagged for immediate intervention.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 flex-shrink-0 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary-fixed-dim">trending_down</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-[9px] uppercase tracking-wider text-[#708ab5] font-bold mb-1">Monitoring Status</p>
+                                <p class="font-inter text-sm text-white/80 leading-relaxed">
+                                    Moderate risk boundaries are set between <span class="text-primary-fixed-dim font-bold">{{ rules|selectattr("rule_key", "equalto", "gpa_high_threshold")|map(attribute="value")|first|default('2.0') }}</span> 
+                                    and <span class="text-primary-fixed-dim font-bold">{{ rules|selectattr("rule_key", "equalto", "gpa_med_threshold")|map(attribute="value")|first|default('2.5') }}</span> GPA.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 p-4 bg-white/5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-primary-fixed-dim text-sm">info</span>
+                            <span class="text-[9px] font-bold text-primary-fixed-dim uppercase tracking-widest">Impact Analysis</span>
+                        </div>
+                        <p class="text-xs text-slate-300">
+                            Based on these rules, all academic manifests will be re-indexed using the specified thresholds.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Card -->
+            <div class="bg-surface-container-high rounded-xl p-6 border-l-4 border-primary">
+                <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                    <strong>Note:</strong> Changes will be applied to all future risk calculations. To update existing data, trigger a re-run from the Data Import screen.
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

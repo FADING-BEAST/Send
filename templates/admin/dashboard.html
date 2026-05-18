@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Academic Sentinel{% endblock %}
+
+{% block content %}
+<!-- Dashboard Title & Editorial Insight -->
+<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-8">
+    <div class="max-w-2xl">
+        <h1 class="text-3xl font-extrabold text-primary font-headline tracking-tight mb-2">Department Insight</h1>
+        <p class="text-secondary font-body leading-relaxed text-sm">
+            Live overview of Computer Science undergraduate risk matrix. Data reflects current academic standing, course failures, and credit load thresholds.
+        </p>
+    </div>
+    <div class="text-right">
+        <div class="text-on-primary-container font-headline font-extrabold text-4xl leading-none">
+            {{ high_pct }}%
+        </div>
+        <div class="text-[10px] text-on-primary-fixed-variant font-bold tracking-widest uppercase mt-2">Critical Risk Ratio</div>
+    </div>
+</div>
+
+<!-- Stats / Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <!-- Total Students -->
+    <div class="bg-white rounded-xl p-6 border border-outline-variant/10 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 left-0 w-1 h-full bg-primary-container"></div>
+        <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Total Cohort</h4>
+        <div class="flex items-end justify-between">
+            <div class="text-4xl font-headline font-extrabold text-primary">{{ total }}</div>
+            <div class="w-10 h-10 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center text-primary-container">
+                <span class="material-symbols-outlined">groups</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- High Risk -->
+    <div class="bg-white rounded-xl p-6 border border-outline-variant/10 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+        <h4 class="text-[10px] font-bold text-error uppercase tracking-widest mb-4">Critical Risk</h4>
+        <div class="flex items-end justify-between">
+            <div class="text-4xl font-headline font-extrabold text-error">{{ high }}</div>
+            <div class="w-10 h-10 bg-error-container/30 rounded-lg flex items-center justify-center text-error">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">priority_high</span>
+            </div>
+        </div>
+        <div class="mt-4 text-[10px] text-slate-500 font-medium italic">
+            Require urgent administrative follow-up.
+        </div>
+    </div>
+
+    <!-- Medium Risk -->
+    <div class="bg-white rounded-xl p-6 border border-outline-variant/10 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 left-0 w-1 h-full bg-tertiary-fixed-dim"></div>
+        <h4 class="text-[10px] font-bold text-on-tertiary-fixed-variant uppercase tracking-widest mb-4">At Risk</h4>
+        <div class="flex items-end justify-between">
+            <div class="text-4xl font-headline font-extrabold text-[#8f003f]">{{ med }}</div>
+            <div class="w-10 h-10 bg-[#ffd9df] rounded-lg flex items-center justify-center text-[#8f003f]">
+                <span class="material-symbols-outlined">trending_down</span>
+            </div>
+        </div>
+        <div class="mt-4 text-[10px] text-slate-500 font-medium italic">
+            Borderline academic performance.
+        </div>
+    </div>
+
+    <!-- Low Risk -->
+    <div class="bg-white rounded-xl p-6 border border-outline-variant/10 shadow-sm relative overflow-hidden group">
+        <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+        <h4 class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-4">On Track</h4>
+        <div class="flex items-end justify-between">
+            <div class="text-4xl font-headline font-extrabold text-emerald-800">{{ low }}</div>
+            <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-12 gap-8">
+    <!-- Quick Actions Bento Section -->
+    <div class="col-span-12 lg:col-span-8 space-y-6">
+        <div class="bg-surface-container-low rounded-2xl p-8 border border-outline-variant/10">
+            <h3 class="font-headline font-bold text-lg text-primary mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-xl">bolt</span>
+                Executive Controls
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="{{ url_for('admin.import_data') }}" class="group bg-white p-6 rounded-xl border border-outline-variant/5 shadow-sm hover:shadow-lg hover:border-primary-container/20 transition-all">
+                    <div class="w-12 h-12 bg-primary-container text-white rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined">cloud_upload</span>
+                    </div>
+                    <div class="text-sm font-bold text-primary mb-1">Import Data</div>
+                    <div class="text-[10px] text-slate-500 leading-tight">Sync student manifest and scores.</div>
+                </a>
+
+                <a href="{{ url_for('admin.users') }}" class="group bg-white p-6 rounded-xl border border-outline-variant/5 shadow-sm hover:shadow-lg hover:border-primary-container/20 transition-all">
+                    <div class="w-12 h-12 bg-[#edeef1] text-[#002147] rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                    <div class="text-sm font-bold text-primary mb-1">Users</div>
+                    <div class="text-[10px] text-slate-500 leading-tight">Manage staff accounts.</div>
+                </a>
+
+                <a href="{{ url_for('admin.risk_rules') }}" class="group bg-white p-6 rounded-xl border border-outline-variant/5 shadow-sm hover:shadow-lg hover:border-primary-container/20 transition-all">
+                    <div class="w-12 h-12 bg-[#edeef1] text-[#002147] rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined">settings_suggest</span>
+                    </div>
+                    <div class="text-sm font-bold text-primary mb-1">Risk Rules</div>
+                    <div class="text-[10px] text-slate-500 leading-tight">Define flagging logic.</div>
+                </a>
+
+                <a href="{{ url_for('admin.courses') }}" class="group bg-white p-6 rounded-xl border border-outline-variant/5 shadow-sm hover:shadow-lg hover:border-primary-container/20 transition-all">
+                    <div class="w-12 h-12 bg-[#edeef1] text-[#002147] rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <div class="text-sm font-bold text-primary mb-1">Courses</div>
+                    <div class="text-[10px] text-slate-500 leading-tight">Registry maintenance.</div>
+                </a>
+
+                <a href="{{ url_for('admin.audit_logs') }}" class="group bg-white p-6 rounded-xl border border-outline-variant/5 shadow-sm hover:shadow-lg hover:border-primary-container/20 transition-all">
+                    <div class="w-12 h-12 bg-[#edeef1] text-[#002147] rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined">history</span>
+                    </div>
+                    <div class="text-sm font-bold text-primary mb-1">Audit Trail</div>
+                    <div class="text-[10px] text-slate-500 leading-tight">Track system mutations.</div>
+                </a>
+
+                <a href="{{ url_for('admin.download_cohort_report') }}" class="group bg-primary-container text-white p-6 rounded-xl shadow-lg hover:scale-[1.02] transition-all">
+                    <div class="w-12 h-12 bg-white/10 text-white rounded-lg flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined">picture_as_pdf</span>
+                    </div>
+                    <div class="text-sm font-bold mb-1 uppercase tracking-wider">Cohort Report</div>
+                    <div class="text-[10px] text-white/60 leading-tight">Full PDF risk analysis.</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Side Feed -->
+    <div class="col-span-12 lg:col-span-4 space-y-6">
+        <div class="bg-white rounded-2xl p-8 border border-outline-variant/10 shadow-sm h-full">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-headline font-bold text-primary">Recent Imports</h3>
+                <a href="{{ url_for('admin.import_history') }}" class="text-[10px] font-bold text-primary-container hover:underline uppercase tracking-widest">History</a>
+            </div>
+            
+            <div class="space-y-4">
+                {% if recent_imports %}
+                    {% for log in recent_imports %}
+                    <div class="p-4 bg-surface-container-low rounded-xl border-l-4 {% if log.status == 'Success' %}border-emerald-500{% else %}border-error{% endif %}">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-primary">{{ log.records_added }} Records Added</span>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded {% if log.status == 'Success' %}bg-emerald-100 text-emerald-800{% else %}bg-error-container text-on-error-container{% endif %}">
+                                {{ log.status }}
+                            </span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">{{ log.timestamp.strftime('%d %b %Y, %H:%M') }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="py-12 flex flex-col items-center justify-center text-center opacity-40">
+                        <span class="material-symbols-outlined text-4xl mb-2">upload_file</span>
+                        <p class="text-xs font-medium italic">No recent activity detected.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Promotion Card -->
+            <div class="mt-10 p-6 bg-[#edeef1] rounded-2xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h4 class="text-xs font-bold text-[#002147] mb-2 uppercase tracking-widest">System Update</h4>
+                    <p class="text-[10px] text-slate-600 leading-relaxed mb-4">Risk algorithm v2.4 is now active. All datasets are being re-indexed.</p>
+                    <button class="bg-[#002147] text-white text-[10px] font-bold py-2 px-4 rounded-lg">Check Docs</button>
+                </div>
+                <div class="absolute -right-6 -bottom-6 opacity-5">
+                    <span class="material-symbols-outlined text-8xl">verified</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Import Preview | Academic Sentinel{% endblock %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-8">
+    <div class="max-w-2xl">
+        <h1 class="text-3xl font-extrabold text-primary font-headline tracking-tight mb-2">Import Verification</h1>
+        <p class="text-secondary font-body leading-relaxed text-sm font-medium">
+            Review the parsed data manifest below. Validate alignment with the institutional schema before committing the synchronization to the central repository.
+        </p>
+    </div>
+    
+    <div class="flex gap-4 items-center">
+        <a href="{{ url_for('admin.import_data') }}" class="px-6 py-3 bg-white border border-outline-variant/10 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-surface-container-low transition-all shadow-sm">
+            Discard & Restart
+        </a>
+        <form action="{{ url_for('admin.import_confirm') }}" method="POST">
+            <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#002147] transition-all shadow-lg flex items-center gap-2">
+                Commit Synchronization
+                <span class="material-symbols-outlined text-[12px]">done_all</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl border border-outline-variant/10 overflow-hidden shadow-sm">
+    <div class="p-6 border-b border-outline-variant/10 bg-surface-container-highest">
+        <h3 class="font-headline font-extrabold text-primary text-lg flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">table_chart_view</span>
+            Parsed Manifest Queue
+        </h3>
+        <p class="text-xs text-slate-500 font-medium mt-1">Review the following {{ rows|length }} records prior to database ingestion.</p>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low border-b border-outline-variant/10">
+                    <th class="py-4 px-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Student ID</th>
+                    <th class="py-4 px-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Name</th>
+                    <th class="py-4 px-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Course Fragment</th>
+                    <th class="py-4 px-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Performance</th>
+                    <th class="py-4 px-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Chronology</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/5">
+                {% for row in rows %}
+                <tr class="hover:bg-primary/5 transition-colors group">
+                    <td class="py-4 px-6">
+                        <span class="font-mono text-xs font-bold text-primary">{{ row['StudentID'] }}</span>
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="text-sm font-bold text-slate-800">{{ row['Name'] }}</span>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-extrabold text-primary">{{ row['CourseCode'] }}</span>
+                            <span class="text-[10px] font-bold text-slate-400 max-w-[150px] truncate">{{ row['CourseTitle'] }}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold text-slate-600 border border-outline-variant/10">
+                                {{ row['Grade'] }}
+                            </span>
+                            <span class="text-sm font-bold {% if row['Score']|int < 40 %}text-error{% else %}text-emerald-600{% endif %}">
+                                {{ row['Score'] }}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[14px] text-slate-400">calendar_month</span>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Sem {{ row['Semester'] }}</span>
+                                <span class="text-[9px] font-bold text-slate-400">{{ row['Session'] }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% if rows|length == 0 %}
+        <div class="py-20 flex flex-col items-center justify-center text-center opacity-50">
+            <div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-4xl text-primary">browser_not_supported</span>
+            </div>
+            <h3 class="text-lg font-bold text-primary mb-1">Manifest Parsing Failed</h3>
+            <p class="text-[10px] font-bold uppercase tracking-widest max-w-sm">No valid records were extracted from the uploaded document.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

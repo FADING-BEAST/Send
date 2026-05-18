@@ -1,0 +1,11 @@
+StudentID,Name,CourseCode,CourseTitle,Grade,Score,Semester,Session,CreditUnit
+NUL/CS/24/001,Musa Adamu,CSC301,Data Structures,A,85,First,2023/2024,3
+NUL/CS/24/001,Musa Adamu,CSC302,Operating Systems,B,72,First,2023/2024,3
+NUL/CS/24/002,Chukwuma Okoro,CSC301,Data Structures,F,20,First,2023/2024,3
+NUL/CS/24/002,Chukwuma Okoro,CSC302,Operating Systems,F,35,First,2023/2024,3
+NUL/CS/24/003,Aisha Bello,CSC301,Data Structures,C,55,First,2023/2024,3
+NUL/CS/24/003,Aisha Bello,CSC302,Operating Systems,D,45,First,2023/2024,3
+NUL/CS/24/004,Blessing John,CSC301,Data Structures,A,90,First,2023/2024,3
+NUL/CS/24/004,Blessing John,CSC302,Operating Systems,A,88,First,2023/2024,3
+NUL/CS/24/005,Ibrahim Khalid,CSC301,Data Structures,F,12,First,2023/2024,3
+NUL/CS/24/005,Ibrahim Khalid,CSC302,Operating Systems,C,50,First,2023/2024,3

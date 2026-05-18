@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings | Academic Sentinel{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-2 mb-10">
+    <h2 class="text-3xl font-extrabold font-manrope text-primary tracking-tight">Security & Profile Settings</h2>
+    <p class="text-secondary max-w-2xl font-body text-sm font-medium">
+        Synchronize your institutional credentials and administrative preferences. Identity management is secured via multi-layer encryption.
+    </p>
+</div>
+
+<div class="max-w-2xl mx-auto space-y-8">
+    <!-- Profile Visual Identity -->
+    <div class="bg-white rounded-2xl border border-outline-variant/10 shadow-sm p-8 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-surface-container-low to-white opacity-50"></div>
+        <div class="relative z-10 flex flex-col items-center">
+            <div class="w-24 h-24 bg-primary-fixed rounded-full border-4 border-white shadow-xl mb-6 flex items-center justify-center font-headline font-extrabold text-3xl text-on-primary-fixed">
+                {{ (current_user.username or current_user.email)[:1].upper() }}
+            </div>
+            <h2 class="text-xl font-bold text-primary mb-1">{{ current_user.username or current_user.email }}</h2>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="px-3 py-1 bg-primary-container/10 text-primary-container text-[10px] font-bold uppercase tracking-widest rounded-full border border-primary-container/10">
+                    {{ current_user.role }} Level Access
+                </span>
+            </div>
+            <p class="text-[11px] font-medium text-slate-400">Institutional ID: {{ current_user.id }}</p>
+        </div>
+    </div>
+
+    <!-- Security Panel -->
+    <div class="bg-white rounded-2xl border border-outline-variant/10 shadow-lg p-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+        
+        <div class="flex items-center gap-3 mb-8">
+            <span class="material-symbols-outlined text-primary">lock_reset</span>
+            <h3 class="font-headline font-bold text-primary">Credential Management</h3>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for cat, msg in messages %}
+            <div class="p-4 rounded-xl mb-6 text-xs font-bold flex items-center gap-3 
+                {% if cat == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-error-container text-on-error-container border border-error/5{% endif %}">
+                <span class="material-symbols-outlined text-sm">{% if cat == 'success' %}verified{% else %}error{% endif %}</span>
+                {{ msg }}
+            </div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" class="space-y-6">
+            <div class="space-y-1.5">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Access Key</label>
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm group-focus-within:text-primary transition-colors">fingerprint</span>
+                    <input type="password" name="current_password" required placeholder="Current Security Key" class="w-full pl-11 pr-4 py-4 bg-surface-container-low border-none rounded-xl text-xs font-bold text-primary focus:ring-2 focus:ring-primary-container transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Target Access Key</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm group-focus-within:text-primary transition-colors">key</span>
+                        <input type="password" name="new_password" required minlength="6" placeholder="New Security Key" class="w-full pl-11 pr-4 py-4 bg-surface-container-low border-none rounded-xl text-xs font-bold text-primary focus:ring-2 focus:ring-primary-container transition-all">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Verify Target Key</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm group-focus-within:text-primary transition-colors">key_visualizer</span>
+                        <input type="password" name="confirm_password" required placeholder="Confirm Security Key" class="w-full pl-11 pr-4 py-4 bg-surface-container-low border-none rounded-xl text-xs font-bold text-primary focus:ring-2 focus:ring-primary-container transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-gradient-to-br from-[#000a1e] to-primary-container text-white rounded-xl font-headline font-extrabold text-sm shadow-xl shadow-primary-container/10 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
+                    Apply Credential Mutation
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Info Card -->
+    <div class="bg-surface-container-highest p-6 rounded-2xl flex items-start gap-4">
+        <span class="material-symbols-outlined text-primary-container">encrypted</span>
+        <p class="text-[10px] text-slate-500 font-medium leading-relaxed italic">
+            Institutional Protocol: Passwords must be at least 6 characters. If you have misplaced your session key, please contact the System Administrator for a direct reset.
+        </p>
+    </div>
+</div>
+{% endblock %}

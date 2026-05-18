@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | {{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-8">
+    <div class="max-w-2xl">
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-extrabold text-primary font-headline tracking-tight">{{ student.name }}</h1>
+            <span class="px-3 py-1 bg-[#edeef1] text-[#002147] text-[9px] font-bold uppercase tracking-widest rounded-full border border-[#002147]/5">Level {{ student.level }}</span>
+        </div>
+        <p class="text-secondary font-body text-sm font-medium">Departmental Portfolio Index: Student ID {{ student.student_id }}</p>
+    </div>
+    <div class="flex items-center gap-4">
+        <a href="{{ url_for('staff.download_student_report', student_id=student.student_id) }}" class="px-6 py-3 bg-white border border-outline-variant/10 rounded-xl text-[10px] font-extrabold text-primary uppercase tracking-widest hover:bg-surface-container-low transition-all shadow-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+            Analytical Dossier
+        </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-12 gap-8">
+    <!-- Left Column: Identity & Risk -->
+    <aside class="col-span-12 lg:col-span-4 space-y-6">
+        <!-- Bio Card -->
+        <div class="bg-white rounded-2xl border border-outline-variant/10 shadow-sm p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-surface-container-low to-white opacity-50"></div>
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-primary-fixed rounded-full border-4 border-white shadow-lg mx-auto mb-6 flex items-center justify-center font-headline font-extrabold text-3xl text-on-primary-fixed">
+                    {{ student.name[:1] }}{{ student.name.split(' ')[-1][:1] }}
+                </div>
+                <h2 class="text-xl font-bold text-primary mb-1">{{ student.name }}</h2>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">{{ student.student_id }}</p>
+                
+                <div class="grid grid-cols-2 gap-4 pt-8 border-t border-outline-variant/5">
+                    <div class="text-left">
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Risk Scale</div>
+                        <div class="text-lg font-extrabold text-primary">{{ "%.2f"|format(analysis.risk_score) if analysis else '—' }}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Standing</div>
+                        <div class="text-[10px] font-extrabold text-primary-container uppercase px-2 py-1 bg-primary-container/10 rounded">{{ student.progression_status or 'Clear' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Factor Reservoir -->
+        {% if analysis %}
+        <div class="bg-white rounded-2xl border border-outline-variant/10 shadow-sm p-8 relative overflow-hidden">
+            {% if analysis.risk_category == 'High' %}
+                <div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+            {% elif analysis.risk_category == 'Medium' %}
+                <div class="absolute top-0 left-0 w-1 h-full bg-tertiary-fixed-dim"></div>
+            {% else %}
+                <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+            {% endif %}
+
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-headline font-bold text-primary text-sm uppercase tracking-tight">Risk Variables</h3>
+                <span class="px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest 
+                    {% if analysis.risk_category == 'High' %}bg-error-container text-on-error-container
+                    {% elif analysis.risk_category == 'Medium' %}bg-[#ffd9df] text-[#8f003f]
+                    {% else %}bg-emerald-50 text-emerald-700{% endif %}">
+                    {{ analysis.risk_category }} Category
+                </span>
+            </div>
+
+            <div class="space-y-4">
+                {% for factor in factors %}
+                <div class="flex gap-3">
+                    <span class="material-symbols-outlined text-sm {% if analysis.risk_category == 'High' %}text-error{% else %}text-tertiary-fixed-dim{% endif %}" style="font-variation-settings: 'FILL' 1;">error</span>
+                    <p class="text-[11px] font-medium text-slate-600 leading-snug">{{ factor }}</p>
+                </div>
+                {% else %}
+                <div class="py-6 flex flex-col items-center opacity-30">
+                    <span class="material-symbols-outlined text-2xl mb-2 text-emerald-500">verified</span>
+                    <p class="text-[10px] font-bold italic">Stable baseline detected.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Advisor Intervention Log -->
+        <div class="bg-surface-container-low rounded-2xl p-8 border border-outline-variant/5">
+            <h3 class="font-headline font-bold text-primary text-sm mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">history_edu</span>
+                Intervention Log
+            </h3>
+            <form action="{{ url_for('staff.save_notes', student_id=student.student_id) }}" method="POST" class="space-y-4">
+                <textarea name="advisor_notes" rows="4" placeholder="Log faculty engagement, recommendations, or behavioral observations..." class="w-full bg-white border-none rounded-xl p-4 text-[11px] font-medium text-primary focus:ring-2 focus:ring-primary-container shadow-sm leading-relaxed">{{ student.notes or '' }}</textarea>
+                <button type="submit" class="w-full py-3 bg-[#002147] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-all">Synchronize Notes</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Right Column: Trajectory & Records -->
+    <main class="col-span-12 lg:col-span-8 space-y-8">
+        <!-- Visual Trajectory -->
+        <section class="bg-white rounded-2xl border border-outline-variant/10 shadow-sm p-8">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="font-headline font-bold text-primary text-sm flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">query_stats</span>
+                    Performance Trajectory
+                </h3>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-2.5 h-2.5 rounded-full bg-primary-container"></div>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">GPA Index</span>
+                    </div>
+                </div>
+            </div>
+            <div class="h-64 relative">
+                <canvas id="gpaChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Academic Dossier -->
+        <section class="bg-white rounded-2xl border border-outline-variant/10 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-outline-variant/5 bg-surface-container-low flex justify-between items-center">
+                <h3 class="font-headline font-bold text-primary text-sm uppercase tracking-tight">Academic Manifest</h3>
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest bg-white px-2 py-1 rounded border border-outline-variant/5">
+                    {{ records|length }} Performance Cycles
+                </span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-surface-container-high/30">
+                            <th class="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-l-4 border-primary">Cycle</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Course Descriptor</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Grade</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Raw Score</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/5">
+                        {% for r in records %}
+                        <tr class="group hover:bg-surface-container-low transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="text-[10px] font-bold text-primary">{{ r.session }}</div>
+                                <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Semester {{ r.semester }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-extrabold text-primary text-xs">{{ r.code }}</div>
+                                <div class="text-[10px] text-slate-500 font-medium italic">{{ r.title }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 rounded text-[10px] font-bold 
+                                    {% if r.grade == 'F' %}bg-error-container text-on-error-container border border-error/5
+                                    {% else %}bg-[#edeef1] text-[#002147] border border-[#002147]/5{% endif %}">
+                                    {{ r.grade }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-headline font-extrabold text-primary">
+                                {{ r.score }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Stitch AI Insights -->
+        <section class="bg-gradient-to-br from-[#000a1e] to-primary-container text-white rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-12 -top-12 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
+                        <span class="material-symbols-outlined text-primary-fixed-dim">smart_toy</span>
+                    </div>
+                    <h3 class="font-manrope text-xl font-bold tracking-tight">AI Curated Strategy</h3>
+                </div>
+                
+                <p class="font-body text-sm leading-relaxed text-slate-300 mb-8 max-w-2xl italic">
+                    "{{ 'Critical academic standing detected. This student requires immediate facultative engagement. Priority: Grade stabilization in core departmental courses.' if analysis and analysis.risk_category == 'High' 
+                    else 'Transitional performance patterns detected. Recommend focused monitoring and proactive advising to prevent further trajectory decay.' if analysis and analysis.risk_category == 'Medium'
+                    else 'Stable academic trajectory confirmed. Continue existing monitoring frequency. Student is a candidate for departmental leadership roles.' }}"
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-primary-fixed-dim text-sm">verified_user</span>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-[#708ab5]">Primary Action</span>
+                        </div>
+                        <p class="text-[11px] font-medium text-slate-100">{{ 'One-on-One Meeting' if analysis and analysis.risk_category != 'Low' else 'General Encouragement' }}</p>
+                    </div>
+                    <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-primary-fixed-dim text-sm">schedule</span>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-[#708ab5]">Next Review</span>
+                        </div>
+                        <p class="text-[11px] font-medium text-slate-100">{{ 'Within 48 Hours' if analysis and analysis.risk_category == 'High' else 'Mid-Semester' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('gpaChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                label: 'Avg Score',
+                data: {{ chart_data|safe }},
+                fill: true,
+                tension: 0.4,
+                borderColor: '#002147',
+                backgroundColor: 'rgba(0, 33, 71, 0.05)',
+                pointBackgroundColor: '#002147',
+                pointBorderWidth: 4,
+                pointBorderColor: '#ffffff',
+                pointRadius: 6,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    border: { display: false },
+                    grid: { display: false },
+                    ticks: { font: { weight: '700', size: 10 }, color: '#94a3b8' }
+                },
+                y: {
+                    min: 0,
+                    max: 100,
+                    border: { display: false },
+                    grid: { color: 'rgba(226, 232, 240, 0.5)', drawTicks: false },
+                    ticks: { font: { weight: '700', size: 10 }, color: '#94a3b8', stepSize: 20 }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

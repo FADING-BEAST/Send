@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications | Academic Sentinel{% endblock %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-8">
+    <div class="max-w-2xl">
+        <h1 class="text-3xl font-extrabold text-primary font-headline tracking-tight mb-2">Notification Center</h1>
+        <p class="text-secondary font-body leading-relaxed text-sm font-medium">
+            Personal engagement stream and system alerts. Monitor real-time triggers from the risk engine and administrative synchronization events.
+        </p>
+    </div>
+    {% if notifications %}
+    <form action="{{ url_for('notify.mark_all_read') }}" method="POST">
+        <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-outline-variant/10 rounded-xl text-[10px] font-bold text-primary uppercase tracking-widest hover:bg-surface-container-low transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">done_all</span>
+            Acknowledge All
+        </button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="max-w-3xl mx-auto space-y-4">
+    {% for n in notifications %}
+    <div class="relative group bg-white rounded-2xl border border-outline-variant/10 shadow-sm p-6 flex gap-6 items-start transition-all hover:shadow-md {% if not n.is_read %}border-l-4 border-l-primary bg-primary/5{% endif %}">
+        <!-- Visual Marker -->
+        <div class="w-12 h-12 flex-shrink-0 rounded-xl flex items-center justify-center 
+            {% if n.category == 'danger' %}bg-error-container text-on-error-container
+            {% elif n.category == 'warning' %}bg-[#ffd9df] text-[#8f003f]
+            {% else %}bg-primary-container text-white{% endif %}">
+            <span class="material-symbols-outlined">
+                {% if n.category == 'danger' %}crisis_alert{% elif n.category == 'warning' %}warning{% else %}info{% endif %}
+            </span>
+        </div>
+
+        <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start mb-1">
+                <h3 class="font-bold text-primary text-sm truncate pr-4">{{ n.title }}</h3>
+                <span class="text-[9px] font-mono text-slate-400 font-bold uppercase tracking-widest flex-shrink-0">
+                    {{ n.timestamp.strftime('%d %b, %H:%M') }}
+                </span>
+            </div>
+            <p class="text-[11px] text-slate-600 leading-relaxed font-medium mb-4">{{ n.body }}</p>
+            
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-[4px] bg-surface-container-highest text-[8px] font-bold uppercase tracking-widest text-slate-500">
+                        {{ n.category or 'System' }}
+                    </span>
+                </div>
+                
+                {% if not n.is_read %}
+                <form action="{{ url_for('notify.mark_read', notif_id=n.id) }}" method="POST">
+                    <button type="submit" class="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
+                        Mark as Read
+                        <span class="material-symbols-outlined text-[10px]">check</span>
+                    </button>
+                </form>
+                {% else %}
+                <span class="text-[9px] font-bold text-slate-300 flex items-center gap-1">
+                    Acknowledged
+                    <span class="material-symbols-outlined text-[10px]">done_all</span>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="py-24 flex flex-col items-center justify-center text-center opacity-40">
+        <div class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-6">
+            <span class="material-symbols-outlined text-5xl text-primary">notifications_off</span>
+        </div>
+        <h3 class="text-lg font-bold text-primary mb-1">Silence is Golden</h3>
+        <p class="text-[10px] font-bold uppercase tracking-widest">No active notifications detected.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

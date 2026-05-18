@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Help & Documentation{% endblock %}
+
+{% block content %}
+<header>
+    <div class="logo">Help & Documentation</div>
+    <div class="actions">
+        <a href="javascript:history.back()" class="btn" style="text-decoration: none; background: rgba(255,255,255,0.05); color: white;">← Back</a>
+    </div>
+</header>
+
+<div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+
+    <!-- Quick Start -->
+    <div class="stat-card" style="padding: 2rem;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem;">
+            🚀 <span>Quick Start Guide</span>
+        </h2>
+        <ol style="color: var(--text-muted); line-height: 2; font-size: 0.9375rem; padding-left: 1.25rem;">
+            <li>Log in using your institutional email and password.</li>
+            <li><strong style="color: white;">Admin users</strong> are redirected to the Admin Console; <strong style="color: white;">Academic Staff</strong> go to the Staff Dashboard.</li>
+            <li>Admins: Upload a CSV of student records via <strong style="color: white;">Import Data</strong>.</li>
+            <li>The system auto-calculates each student's risk level after import.</li>
+            <li>Staff: View the <strong style="color: white;">At-Risk Alerts</strong> panel to prioritise interventions.</li>
+            <li>Open a student profile to see GPA trends, risk factors, and save advisor notes.</li>
+            <li>Download a <strong style="color: white;">PDF report</strong> from the profile or the <strong style="color: white;">Cohort Report</strong> from the Admin Console.</li>
+        </ol>
+    </div>
+
+    <!-- CSV Format -->
+    <div class="stat-card" style="padding: 2rem;">
+        <h2 style="font-size: 1.125rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+            📋 <span>CSV Import Format</span>
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">The import file must be a <code style="background:rgba(255,255,255,0.08); padding: 0.1em 0.4em; border-radius:0.25rem;">.csv</code> with the following columns (header row required):</p>
+        <div style="background: rgba(0,0,0,0.25); border-radius: 0.5rem; padding: 1rem; overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--glass-border);">
+                        <th style="text-align: left; padding: 0.5rem; color: var(--primary);">Column</th>
+                        <th style="text-align: left; padding: 0.5rem; color: var(--primary);">Required</th>
+                        <th style="text-align: left; padding: 0.5rem; color: var(--primary);">Example</th>
+                    </tr>
+                </thead>
+                <tbody style="color: var(--text-muted);">
+                    <tr><td style="padding:0.4rem 0.5rem;">StudentID</td><td>✅</td><td>NUL/CS/22/001</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">Name</td><td>✅</td><td>Fatima Abubakar</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">CourseCode</td><td>✅</td><td>CSC301</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">CourseTitle</td><td>✅</td><td>Data Structures</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">Grade</td><td>✅</td><td>A, B, C, D, E, F</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">Score</td><td>✅</td><td>72.5</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">Semester</td><td>✅</td><td>First / Second</td></tr>
+                    <tr><td style="padding:0.4rem 0.5rem;">Session</td><td>✅</td><td>2022/2023</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Risk Levels -->
+    <div class="stat-card" style="padding: 2rem;">
+        <h2 style="font-size: 1.125rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+            📊 <span>Understanding Risk Levels</span>
+        </h2>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; gap: 1rem; align-items: flex-start; padding: 1rem; background: rgba(239,68,68,0.07); border-radius: 0.5rem; border-left: 4px solid var(--risk-high);">
+                <span style="font-size: 1.25rem;">🔴</span>
+                <div>
+                    <div style="font-weight: 700; color: var(--risk-high);">High Risk</div>
+                    <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem;">CGPA below the High Risk threshold, or failure in 2+ core courses. Requires immediate advisor intervention.</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: flex-start; padding: 1rem; background: rgba(245,158,11,0.07); border-radius: 0.5rem; border-left: 4px solid var(--risk-medium);">
+                <span style="font-size: 1.25rem;">🟡</span>
+                <div>
+                    <div style="font-weight: 700; color: var(--risk-medium);">Medium Risk</div>
+                    <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem;">CGPA in the medium-risk band, or failure in 1 core course. Monitoring and early intervention recommended.</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: flex-start; padding: 1rem; background: rgba(16,185,129,0.07); border-radius: 0.5rem; border-left: 4px solid var(--risk-low);">
+                <span style="font-size: 1.25rem;">🟢</span>
+                <div>
+                    <div style="font-weight: 700; color: var(--risk-low);">Low Risk / Clear</div>
+                    <div style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem;">Student is performing within acceptable academic standards. No immediate action required.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Permissions -->
+    <div class="stat-card" style="padding: 2rem;">
+        <h2 style="font-size: 1.125rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+            👥 <span>Roles & Permissions</span>
+        </h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="padding: 1rem; background: rgba(99,102,241,0.07); border-radius: 0.5rem; border: 1px solid rgba(99,102,241,0.2);">
+                <div style="font-weight: 700; margin-bottom: 0.75rem; color: var(--primary);">Admin (Exam Officer)</div>
+                <ul style="color: var(--text-muted); font-size: 0.8125rem; line-height: 1.8; padding-left: 1.25rem;">
+                    <li>Import & manage student data</li>
+                    <li>Configure risk rules</li>
+                    <li>Manage user accounts</li>
+                    <li>View & export audit logs</li>
+                    <li>Manage course registry</li>
+                    <li>Download cohort reports</li>
+                </ul>
+            </div>
+            <div style="padding: 1rem; background: rgba(99,102,241,0.07); border-radius: 0.5rem; border: 1px solid rgba(99,102,241,0.2);">
+                <div style="font-weight: 700; margin-bottom: 0.75rem; color: var(--primary);">Academic Staff (Advisor)</div>
+                <ul style="color: var(--text-muted); font-size: 0.8125rem; line-height: 1.8; padding-left: 1.25rem;">
+                    <li>View student dashboard & cohort list</li>
+                    <li>Browse individual student profiles</li>
+                    <li>Save advisor notes per student</li>
+                    <li>Download individual PDF reports</li>
+                    <li>Monitor at-risk alerts</li>
+                    <li>Download cohort summary report</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="stat-card" style="padding: 2rem;">
+        <h2 style="font-size: 1.125rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+            ❓ <span>Frequently Asked Questions</span>
+        </h2>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for q, a in [
+               ('How do I reset my password?', 'Go to the Login page and click "Forgot your password?" — a reset token will be generated that you can use at the Reset Password page.'),
+               ('Why is a student showing as High Risk after a re-import?', "Risk is recalculated automatically after every confirmed import. If the student's scores have changed, the risk category will update accordingly."),
+               ('Can I undo an import?', 'Currently, duplicates are skipped automatically. Contact your system administrator to manually remove incorrectly imported records.'),
+               ('How do I add a new course?', 'Admin users can access the Course Registry from the Admin Console dashboard and add courses with credit units and Core Course flags.'),
+               ('What does the Core Course flag mean?', "Flagging a course as Core means failing it will directly increase a student\'s risk score — weighted more heavily in the risk algorithm.") 
+            ] %}
+            <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 0.875rem;">
+                <div style="font-weight: 600; margin-bottom: 0.35rem; font-size: 0.9375rem;">{{ q }}</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem;">{{ a }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="stat-card" style="padding: 1.5rem; text-align: center;">
+        <p style="color: var(--text-muted); font-size: 0.875rem;">
+            Need further assistance? Contact your system administrator or the ICT Support desk at
+            <strong style="color: white;">ict@nileuniversity.edu.ng</strong>
+        </p>
+    </div>
+
+</div>
+{% endblock %}

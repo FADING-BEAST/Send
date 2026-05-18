@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Access Violation (403) | Academic Sentinel{% endblock %}
+
+{% block auth_content %}
+<main class="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(circle_at_0%_0%,_#f3f3f7_0%,_#f9f9fd_100%)]">
+    <div class="text-center max-w-lg">
+        <div class="relative mb-12">
+            <div class="font-headline font-black text-[180px] text-error/10 leading-none select-none">403</div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-24 h-24 bg-white rounded-3xl shadow-2xl flex items-center justify-center -rotate-12 border border-error/10">
+                    <span class="material-symbols-outlined text-5xl text-error animate-pulse">lock</span>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-3xl font-extrabold text-primary font-headline mb-4 tracking-tight">Security Perimeter Violation</h2>
+        <p class="text-secondary font-body text-sm font-medium leading-relaxed mb-10 max-w-sm mx-auto">
+            Your current security clearance is insufficient to synchronize with this departmental endpoint. Authorization levels are strictly enforced by the Academic Sentinel protocol.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="javascript:history.back()" class="w-full sm:w-auto px-8 py-3 bg-white border border-outline-variant/10 rounded-xl text-[10px] font-extrabold text-primary uppercase tracking-widest hover:bg-surface-container-low transition-all shadow-sm">
+                Reverse Navigation
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="w-full sm:w-auto px-8 py-3 bg-[#002147] text-white rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-primary transition-all shadow-lg flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">home</span>
+                Request Authorization
+            </a>
+        </div>
+    </div>
+</main>
+{% endblock %}

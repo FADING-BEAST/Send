@@ -1,0 +1,3 @@
+StudentID,Name,CourseCode,CourseTitle,Grade,Score,Semester,Session
+2021/CS/001,John Doe,CS101,Intro to Programming,A,85.0,1,2023/2024
+2021/CS/002,Jane Smith,CS101,Intro to Programming,F,32.0,1,2023/2024

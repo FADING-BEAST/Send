@@ -1,0 +1,11 @@
+StudentID,Name,CourseCode,CourseTitle,Grade,Semester,Session,Attempt
+CS001,John Doe,CSC101,Introduction to Programming,B,1,2023/2024,1
+CS001,John Doe,CSC102,Data Structures,F,2,2023/2024,1
+CS001,John Doe,CSC102,Data Structures,C,1,2024/2025,2
+CS002,Jane Smith,CSC101,Introduction to Programming,A,1,2023/2024,1
+CS002,Jane Smith,MAT101,General Mathematics,A,1,2023/2024,1
+CS003,Bob Wilson,CSC101,Introduction to Programming,D,1,2023/2024,1
+CS003,Bob Wilson,CSC102,Data Structures,F,2,2023/2024,1
+CS003,Bob Wilson,CSC201,Algorithms,F,1,2024/2025,1
+CS004,Alice Brown,CSC101,Introduction to Programming,B,1,2023/2024,1
+CS004,Alice Brown,MAT101,General Mathematics,C,1,2023/2024,1

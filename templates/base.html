@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}Academic Sentinel{% endblock %}</title>
+    
+    <!-- Design System: Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Design System: Tailwind & Custom Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#191c1e",
+                        "tertiary-fixed": "#ffd9df",
+                        "secondary": "#5c5f60",
+                        "primary-container": "#002147",
+                        "primary-fixed-dim": "#aec7f6",
+                        "secondary-fixed": "#e1e3e4",
+                        "outline-variant": "#c4c6cf",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#3f0018",
+                        "primary": "#000a1e",
+                        "tertiary": "#200008",
+                        "on-secondary-fixed-variant": "#454748",
+                        "surface-container-highest": "#e2e2e6",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#edeef1",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#4a001d",
+                        "on-tertiary-container": "#f4447e",
+                        "surface-container-high": "#e7e8eb",
+                        "on-surface-variant": "#44474e",
+                        "tertiary-fixed-dim": "#ffb1c2",
+                        "on-primary-container": "#708ab5",
+                        "surface-variant": "#e2e2e6",
+                        "inverse-primary": "#aec7f6",
+                        "outline": "#74777f",
+                        "on-secondary-container": "#626566",
+                        "surface-tint": "#465f88",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9fd",
+                        "inverse-surface": "#2e3133",
+                        "surface-container-low": "#f3f3f7",
+                        "surface": "#f9f9fd",
+                        "primary-fixed": "#d6e3ff",
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "secondary-container": "#e1e3e4",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001b3d",
+                        "on-tertiary-fixed-variant": "#8f003f",
+                        "inverse-on-surface": "#f0f0f4",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#191c1d",
+                        "surface-dim": "#d9dadd",
+                        "surface-bright": "#f9f9fd",
+                        "on-surface": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, .font-headline { font-family: 'Manrope', sans-serif; }
+        .alert-bubble { transition: all 0.3s ease; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-surface text-on-surface min-h-screen {% if current_user.is_authenticated %}flex{% endif %}">
+
+    {% if current_user.is_authenticated %}
+    <!-- SideNavBar Component -->
+    <aside class="h-screen w-64 fixed left-0 top-0 bg-[#f3f3f7] dark:bg-slate-900 flex flex-col py-8 pl-4 z-50">
+        <div class="mb-10 px-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+                </div>
+                <div>
+                    <h1 class="text-xs font-extrabold text-[#002147] dark:text-white font-headline leading-tight">ACADEMIC SENTINEL</h1>
+                    <p class="text-[10px] text-slate-500 font-manrope font-bold tracking-widest uppercase">CS Department</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            {% if current_user.role == 'Admin' %}
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('admin.dashboard') }}">
+                <span class="material-symbols-outlined text-xl">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('admin.import_data') }}">
+                <span class="material-symbols-outlined text-xl">cloud_upload</span>
+                <span>Data Import</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('admin.risk_rules') }}">
+                <span class="material-symbols-outlined text-xl">warning</span>
+                <span>Risk Rules</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('admin.courses') }}">
+                <span class="material-symbols-outlined text-xl">school</span>
+                <span>Courses</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('admin.users') }}">
+                <span class="material-symbols-outlined text-xl">group</span>
+                <span>User Accounts</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('admin.audit_logs') }}">
+                <span class="material-symbols-outlined text-xl">history</span>
+                <span>Audit Logs</span>
+            </a>
+            {% else %}
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('staff.dashboard') }}">
+                <span class="material-symbols-outlined text-xl">analytics</span>
+                <span>Risk Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('staff.dashboard') }}">
+                <span class="material-symbols-outlined text-xl">person_search</span>
+                <span>Student Registry</span>
+            </a>
+            {% endif %}
+            
+            <div class="mt-8 pt-4 border-t border-outline-variant/10">
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 font-manrope font-semibold tracking-tight hover:bg-white rounded-l-lg transition-all" href="{{ url_for('help.index') }}">
+                    <span class="material-symbols-outlined text-xl">help_outline</span>
+                    <span>Help Center</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="mt-auto px-4">
+            <div class="bg-surface-container rounded-xl p-4 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center font-bold text-xs text-on-primary-fixed">
+                    {{ current_user.username[:2]|upper }}
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-primary truncate">{{ current_user.username }}</p>
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">{{ current_user.role }}</p>
+                </div>
+            </div>
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-2 mt-4 px-4 text-xs font-bold text-error hover:opacity-70 transition-all">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 ml-64 min-h-screen flex flex-col">
+        <!-- TopNavBar Component -->
+        <header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-white/70 backdrop-blur-md flex justify-between items-center h-16 px-8 border-b border-outline-variant/10">
+            <div class="flex items-center flex-1 max-w-xl">
+                <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                    <input class="w-full bg-surface-container-low border-none rounded-sm py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary-container" placeholder="Quick search..." type="text"/>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <!-- Notifications -->
+                <a href="{{ url_for('notify.index') }}" class="relative text-slate-600 hover:text-[#002147] transition-all">
+                    <span class="material-symbols-outlined">notifications</span>
+                    {% if unread_notif_count > 0 %}
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                        {{ unread_notif_count }}
+                    </span>
+                    {% endif %}
+                </a>
+                
+                <div class="h-8 w-[1px] bg-outline-variant/30"></div>
+                
+                <a href="{{ url_for('auth.profile') }}" class="flex items-center gap-3 group">
+                    <div class="text-right hidden sm:block">
+                        <div class="text-xs font-bold text-primary group-hover:text-primary-container transition-colors">{{ current_user.username }}</div>
+                        <div class="text-[10px] text-slate-500 font-medium">Session Active</div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 group-hover:border-primary-container transition-all">
+                        <span class="material-symbols-outlined text-on-surface-variant flex items-center justify-center h-full">account_circle</span>
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Flash Messages Overlay -->
+        <div class="fixed top-20 right-8 z-50 flex flex-col gap-3 pointer-events-none">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert-bubble pointer-events-auto min-w-[320px] p-4 rounded-xl shadow-xl border flex items-center gap-3 
+                            {% if category == 'error' or category == 'danger' %} bg-error-container border-error/20 text-on-error-container
+                            {% elif category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800
+                            {% else %} bg-surface-container-high border-outline-variant text-on-surface
+                            {% endif %}">
+                            <span class="material-symbols-outlined text-xl">
+                                {% if category == 'error' or category == 'danger' %}error{% elif category == 'success' %}check_circle{% else %}info{% endif %}
+                            </span>
+                            <p class="text-xs font-bold">{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <main class="mt-16 p-8 flex-1">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    {% else %}
+        {% block auth_content %}{% endblock %}
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert-bubble');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-20px)';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

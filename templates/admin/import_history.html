@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Import History{% endblock %}
+
+{% block content %}
+<header>
+    <div class="logo">Import History</div>
+    <div class="actions">
+        <a href="{{ url_for('admin.import_data') }}" class="btn" style="text-decoration: none; background: rgba(255,255,255,0.05); color: white;">Upload New CSV</a>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn" style="text-decoration: none; background: rgba(255,255,255,0.05); color: white; margin-left: 0.5rem;">Back to Console</a>
+    </div>
+</header>
+
+<section class="table-container">
+    <div style="padding: 1.5rem; border-bottom: 1px solid var(--glass-border);">
+        <h3 style="font-size: 1.125rem;">CSV Upload Log</h3>
+        <p style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem;">Full history of all data imports performed in the system.</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Date & Time</th>
+                <th>Uploaded By</th>
+                <th>Records Added</th>
+                <th>Duplicates Skipped</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">
+                    {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                </td>
+                <td>{{ log.uploader.username if log.uploader else 'Unknown' }}</td>
+                <td style="font-weight: 700;">{{ log.records_added }}</td>
+                <td>{{ log.duplicates_skipped }}</td>
+                <td>
+                    <span class="badge" style="
+                        background: {% if log.status == 'Success' %}rgba(16,185,129,0.1){% else %}rgba(239,68,68,0.1){% endif %};
+                        color: {% if log.status == 'Success' %}var(--risk-low){% else %}var(--risk-high){% endif %};">
+                        {{ log.status }}
+                    </span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">No imports recorded yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
